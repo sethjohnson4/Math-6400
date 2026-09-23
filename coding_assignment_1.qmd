@@ -1,0 +1,370 @@
+---
+title: "Coding Assignment 1: Restaurant Sales and Daily Maximum Temperature"
+author: "Team Member Names"
+date: today
+toc: true
+format:
+  html:
+    html-math-method: katex
+    code-tools: true
+    self-contained: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+## Purpose
+
+The purpose of this assignment is to give you an opportunity to apply many of the data assembly concepts that you have learned about in this course.
+
+### Objectives
+
+The main objective of this assignment is to explore whether restaurant sales are associated with daily maximum temperatures. However, the data come from different data frames that need to be restructured so that the data in them can be joined together.
+
+- Work with your teammates to complete the tasks.
+- Use several data assembly tasks, including those listed below:
+  - Reading in data from Parquet files
+  - Dealing with rows that have missing values
+  - Reshaping data frames
+  - Creating new columns in a data frame
+  - Joining data frames
+- Perform some initial exploration of the data in a data frame.
+- Practice using `tidyverse` functions to clean, reshape, summarize, join, and visualize data.
+
+### Task
+
+Work with your assigned team to complete this coding assignment using **R, Quarto, and tidyverse**. Your goal is to explore whether restaurant sales are associated with daily maximum temperatures by cleaning, reshaping, and joining two datasets:
+
+- `ities.parquet`
+- `max_temp.parquet`
+
+Download both Parquet files from Canvas and save them in the same folder as your Quarto (`.qmd`) file.
+
+Begin by creating a new Quarto document (`.qmd`) in RStudio or Positron. Follow the step-by-step instructions to import data, handle missing values, reshape data frames, and generate summary statistics. You will also create new columns, join datasets, and produce visualizations to explore relationships between variables.
+
+Once you have completed all required tasks, restart your R session, render the entire document, and make sure the HTML file is created without errors.
+
+
+#### Quick Render Check
+
+Run the code below and render your Quarto document.  
+If the plot appears in the HTML file, your document is rendering R output correctly.
+
+```{r}
+#| label: render-check
+#| echo: true
+
+plot(
+  cars,
+  main = "Quarto Render Check",
+  xlab = "Speed",
+  ylab = "Stopping Distance"
+)
+```
+### Assignment Instructions
+
+#### 1. (2 point) Load the packages
+
+Load the R packages that you will use in the document.
+
+Use:
+
+- `tidyverse` for data wrangling and visualization
+- `arrow` for reading Parquet files
+
+```{r}
+#| label: q01-load-packages
+
+# Write your code here
+```
+
+#### 2. (4 points) Load the restaurant data
+
+Load the data from `ities.parquet` into a data frame named **dfi**.
+
+Use `read_parquet()` from the `arrow` package.
+
+Display the structure and the first five rows of **dfi**.
+
+```{r}
+#| label: q02-load-restaurant-data
+
+# Write your code here
+```
+
+#### 3. (4 points) Load the weather data
+
+Load the data from `max_temp.parquet` into a data frame named **dfw**.
+
+Use `read_parquet()` from the `arrow` package.
+
+Display the structure and the first five rows of **dfw**.
+
+```{r}
+#| label: q03-load-weather-data
+
+# Write your code here
+```
+
+#### 4. (8 points) Check and convert data types
+
+Using any appropriate commands, make any necessary data type conversions to columns in **dfi** and/or **dfw**.
+
+When appropriate, use tidyverse functions such as `mutate()` together with functions for converting dates, numbers, or character variables.
+
+Include code that displays the updated structure of the data frames to verify that the data type conversions, if any, worked.
+
+Below the output, comment on why you did or did not make data type conversions.
+
+You may want to come back to this task and update it once you start working on the subsequent tasks.
+
+```{r}
+#| label: q04-convert-data-types
+
+# Write your code here
+```
+
+**Comment:**
+
+Write your response here.
+
+#### 5. (2 point) Display summary statistics
+
+Display summary statistics for all columns of both data frames.
+
+```{r}
+#| label: q05-summary-statistics
+
+# Write your code here
+```
+
+#### 6. (6 points) Identify and handle missing values
+
+Include code that displays the count of missing values in each column of **dfi**.
+
+Note that only a small number of rows are affected, and not every column contains missing values.
+
+Use tidyverse functions such as `summarise()` and `across()` where appropriate.
+
+Choose to remove the rows with missing values or impute the missing values, and then use appropriate commands to complete that process.
+
+Use code to display evidence that it worked, such as summarizing the missing values again.
+
+Defend that choice in 1–2 sentences for each column with missing values.
+
+```{r}
+#| label: q06-missing-values
+
+# Write your code here
+```
+
+**Explanation:**
+
+Write your response here.
+
+#### 7. (8 points) Aggregate the restaurant data to the daily level
+
+We need to prepare **dfi** and **dfw** so that we can join them together.
+
+To do so, we want to aggregate the restaurant data at the daily level.
+
+Create a new data frame named **dfid** by aggregating **dfi** at the daily level.
+
+The data frame **dfid** must contain the date column and the columns `Quantity` and `TotalDue` from **dfi**, summarized at the daily level.
+
+Use tidyverse functions such as:
+
+- `group_by()`
+- `summarise()`
+
+Include code that displays the first 10 rows of **dfid** to verify that it worked.
+
+In 1–2 sentences, defend the choice of the summary measure (sum, mean, or another measure) used to aggregate the values in each column.
+
+```{r}
+#| label: q07-aggregate-daily
+
+# Write your code here
+```
+
+**Explanation:**
+
+Write your response here.
+
+#### 8. (4 points) Reshape the weather data
+
+Create a new data frame named **dfwd** by converting **dfw** from a wide format to a long format.
+
+The names of the seven columns, Monday through Sunday, should be stored in a new column named `day`, and the values from those seven columns should be stored in a new column named `max_temp`.
+
+Use the tidyverse function `pivot_longer()`.
+
+Include code that displays the first 10 rows of **dfwd** to verify that the conversion worked.
+
+```{r}
+#| label: q08-reshape-weather
+
+# Write your code here
+```
+
+#### 9. (8 points) Create a Date column
+
+Update the **dfwd** data frame by adding a column named `Date` that corresponds to the value in the `day` column.
+
+Each `WeekStarting` value is the **Sunday** on which that week begins, so the Monday of that week is the day *after* `WeekStarting`, and the Sunday at the end of that week is seven days after `WeekStarting`.
+
+For example, if the `WeekStarting` value is `2016-01-03`, then the value in the `Date` column for the Monday that comes after `2016-01-03` should be `2016-01-04`.
+
+Use tidyverse functions such as `mutate()` and `case_when()` where appropriate.
+
+Arrange **dfwd** in ascending order of `Date` and include code to display the first 10 rows to verify that it worked.
+
+Beneath the output, comment on how you know that the creation of the `Date` column worked.
+
+```{r}
+#| label: q09-create-date
+
+# Write your code here
+```
+
+**Comment:**
+
+Write your response here.
+
+#### 10. (4 points) Join the two data frames
+
+Join the data frames **dfid** and **dfwd** into one data frame named **df** such that only the rows that are in both **dfid** and **dfwd** are included in **df**.
+
+Use the tidyverse function `inner_join()`.
+
+Arrange **df** in ascending order of `Date`.
+
+Then include code that displays something to show that the join worked.
+
+Briefly identify how that output helps you know that the join worked.
+
+The restaurant data and the weather data do not cover the same span of dates, so **df** will have far fewer rows than **dfid**. As a check on your work, **df** should contain **311 rows**. If your row count differs, revisit your date conversions in Task 4 and your `Date` column in Task 9.
+
+In 1–2 sentences, explain why an inner join is the appropriate choice here, and identify what would have been different had you used `left_join()` instead.
+
+```{r}
+#| label: q10-join-data
+
+# Write your code here
+```
+
+**Comment:**
+
+Write your response here.
+
+#### 11. (8 points) Create scatterplots
+
+Use `ggplot2` to create the three scatterplots described below.
+
+Make sure each plot has an appropriate title and clearly labeled axes.
+
+##### A. Maximum temperature and TotalDue
+
+Create a scatterplot with:
+
+- `max_temp` on the x-axis
+- `TotalDue` on the y-axis
+
+```{r}
+#| label: fig-maxtemp-totaldue
+#| fig-cap: "Daily maximum temperature and total amount due"
+
+# Write your code here
+```
+
+##### B. Maximum temperature and Quantity
+
+Create a scatterplot with:
+
+- `max_temp` on the x-axis
+- `Quantity` on the y-axis
+
+```{r}
+#| label: fig-maxtemp-quantity
+#| fig-cap: "Daily maximum temperature and quantity sold"
+
+# Write your code here
+```
+
+##### C. Quantity and TotalDue
+
+Create a scatterplot with:
+
+- `Quantity` on the x-axis
+- `TotalDue` on the y-axis
+
+```{r}
+#| label: fig-quantity-totaldue
+#| fig-cap: "Quantity sold and total amount due"
+
+# Write your code here
+```
+
+Below the third scatterplot, identify whether there appears to be a relationship for each pair of variables:
+
+- `max_temp` and `TotalDue`
+- `max_temp` and `Quantity`
+- `Quantity` and `TotalDue`
+
+For each relationship, briefly describe the **direction**, **form**, and **strength** of the pattern you observe.
+
+Remember that these are observational data, so the scatterplots can show an association but do not by themselves establish causation.
+
+**Interpretation:**
+
+Write your response here.
+
+#### 12. (8 points) Reflection
+
+Briefly answer each question in **1–2 sentences**.
+
+**1. What did you do well on this assignment?**
+
+Write your response here.
+
+**2. What was the most challenging part of the assignment?**
+
+Write your response here.
+
+**3. What would have improved your experience with this assignment?**
+
+Write your response here.
+
+**4. What do you still need help with?**
+
+Write your response here.
+
+
+#### 13. (3 point) Render and submit the document
+
+Make sure to:
+
+1. Save your Quarto document.
+2. Restart your R session.
+3. Render the entire document from beginning to end.
+4. Confirm that the document renders without errors.
+5. Submit both the `.qmd` file and the rendered `.html` file.
+
+## Group Dynamics
+
+Ensure equitable distribution of work among group members.
+### Submission Instructions
+
+1. Download the `ities.parquet` and `max_temp.parquet` files from Canvas and save them in the same folder on your computer.
+2. Open RStudio or Positron and navigate to the folder where the data files are saved.
+3. Create a new Quarto (`.qmd`) document in that folder.
+4. Complete all required tasks using R and tidyverse.
+5. Restart your R session and render the Quarto document.
+6. Make sure that **one person in your group submits** both the `.qmd` and `.html` files on Canvas.
+
+### Grading Criteria
+
+Points will be awarded based on the point allocation listed above.
+
+Points may also be deducted for items not explicitly listed, such as failure to submit the assignment on time or failure to submit a document that renders correctly.
