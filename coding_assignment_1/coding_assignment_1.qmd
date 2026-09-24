@@ -75,7 +75,8 @@ Use:
 
 ```{r}
 #| label: q01-load-packages
-
+library(tidyverse)
+library(arrow)
 # Write your code here
 ```
 
@@ -89,7 +90,9 @@ Display the structure and the first five rows of **dfi**.
 
 ```{r}
 #| label: q02-load-restaurant-data
-
+dfi <- read_parquet("ities.parquet")
+glimpse(dfi)
+head(dfi, 5)
 # Write your code here
 ```
 
