@@ -108,6 +108,10 @@ Display the structure and the first five rows of **dfw**.
 #| label: q03-load-weather-data
 
 # Write your code here
+
+dfw <- read_parquet("max_temp.parquet")
+glimpse(dfw)
+head(dfw)
 ```
 
 #### 4. (8 points) Check and convert data types
