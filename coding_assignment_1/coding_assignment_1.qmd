@@ -130,6 +130,14 @@ You may want to come back to this task and update it once you start working on t
 #| label: q04-convert-data-types
 
 # Write your code here
+# The date format here is not very effective for analysis. I will update it to convert it to yy-mm-dd
+
+library(lubridate)
+
+dfw <- dfw %>%
+  mutate(WeekStarting = mdy(WeekStarting))
+
+glimpse(dfw)
 ```
 
 **Comment:**
