@@ -138,6 +138,12 @@ dfw <- dfw %>%
   mutate(WeekStarting = mdy(WeekStarting))
 
 glimpse(dfw)
+
+#doing the same thing for dfi
+dfi <-  dfi %>% 
+  mutate(Date = mdy(Date))
+
+glimpse(dfi)
 ```
 
 **Comment:**
@@ -174,11 +180,72 @@ Defend that choice in 1–2 sentences for each column with missing values.
 #| label: q06-missing-values
 
 # Write your code here
+library(dplyr)
+
+# finding rows with missing values in dfi
+na_counts_dplyr <- dfi %>%
+  summarise_all(~ sum(is.na(.)))
+
+
+print(na_counts_dplyr)
+
+
+# Display rows where columns contain NA
+dfi_missing <- dfi %>%
+  filter(if_any(everything(), is.na))
+
+print(dfi_missing)
+
+#missing prices come from Price and TotalDue columns
+
+#finding price values of Chicken and Onion Kabob and Beef and Squash Kabob
+
+chick_onion <- dfi %>%
+  filter(LineItem == "Chicken and Onion Kabob")
+
+head(chick_onion)
+
+#price is 14.68 for Chicken and Onion Kabob
+
+#finding price values of Beef and Squash Kabob
+
+beef_squash <- dfi %>%
+  filter(LineItem == "Beef and Squash Kabob")
+
+head(beef_squash)
+
+#price is 12.02 for Beef and Squash Kabob
+
+#replacing Price values using case_when, TRUE leaves other values untouched
+dfi_cleaned <- dfi %>%
+  mutate(Price = case_when(
+    Category == "Chicken" & is.na(Price) ~ 14.68,
+    Category == "Beef" & is.na(Price) ~ 12.02,
+    TRUE ~ Price
+  ))
+
+#replacing TotalDue with calculated values from Price and Quantity
+dfi_real_clean <- dfi_cleaned %>%
+  mutate(TotalDue = case_when(
+    Category == "Chicken" & is.na(TotalDue) ~ 14.68 * Quantity,
+    Category == "Beef" & is.na(TotalDue) ~ 12.02 * Quantity,
+    TRUE ~ Price
+  ))
+
+#rechecking for missing values
+na_counts_dplyr <- dfi %>%
+  summarise_all(~ sum(is.na(.)))
+
+summary(dfi_real_clean)
+
+```
+```{r}
+
 ```
 
 **Explanation:**
 
-Write your response here.
+It seems logical, since the missing values were price values, to fill missing Price values in with information from other rows with the same product. Then it's just a simple matter of doing a simple calculation to complete the TotalDue column. 
 
 #### 7. (8 points) Aggregate the restaurant data to the daily level
 
@@ -202,12 +269,37 @@ In 1–2 sentences, defend the choice of the summary measure (sum, mean, or anot
 ```{r}
 #| label: q07-aggregate-daily
 
-# Write your code here
+# # Write your code here
+dfid <- dfi_real_clean %>%
+  group_by(Date) %>%
+  summarize(
+    sum_quantity = sum(Quantity, na.rm = TRUE), 
+    sum_total = sum(TotalDue, na.rm = TRUE)
+    )
+
+head(dfid, n=10)
+
+#noticing missing dates so I'm completing missing dates with 0 values for sum_quantity and sum_total
+
+#finding range of dates in dfid
+range(dfid$Date)
+
+#filling dates from 2014-01-04 to 2017-04-05
+dfid <-  dfid %>%
+  complete(
+    Date = seq(min(Date), max(Date), by = "day"),
+    fill = list(
+      sum_quantity = 0,
+      sum_total = 0
+    )
+  )
+
+head(dfid, n=10)
 ```
 
 **Explanation:**
 
-Write your response here.
+Aggregating by sum seemed like a good way to visualize differences in how much money was brought in per day. Taking the average would give the average quantity and total due per transaction, and that doesn't seem to be what we are interested in. 
 
 #### 8. (4 points) Reshape the weather data
 
