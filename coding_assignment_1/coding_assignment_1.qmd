@@ -152,6 +152,8 @@ Display summary statistics for all columns of both data frames.
 #| label: q05-summary-statistics
 
 # Write your code here
+summary(dfi)
+summary(dfw)
 ```
 
 #### 6. (6 points) Identify and handle missing values
