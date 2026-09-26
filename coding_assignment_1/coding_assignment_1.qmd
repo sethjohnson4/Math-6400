@@ -341,12 +341,29 @@ Beneath the output, comment on how you know that the creation of the `Date` colu
 #| label: q09-create-date
 
 # Write your code here
-dfwd %>% 
+dfwd <- dfwd %>% 
+  mutate(Date = case_when(
+    day == "Sunday" ~ WeekStarting,
+    day == "Monday" ~ WeekStarting + 1, 
+    day == "Tuesday" ~ WeekStarting + 2, 
+    day == "Wednesday" ~ WeekStarting + 3, 
+    day == "Thursday" ~ WeekStarting + 4, 
+    day == "Friday" ~ WeekStarting + 5, 
+    day == "Saturday" ~ WeekStarting + 6,
+    TRUE ~ as.Date(NA)
+  ))
+
+dfwd <- dfwd %>% 
+   arrange(Date)
+
+head(dfwd, n=10)
+
+
 ```
 
 **Comment:**
 
-Write your response here.
+The creation of the Date column worked because we can see when we look at the first few rows that we now have a new column called Date that has been added to the df
 
 #### 10. (4 points) Join the two data frames
 
