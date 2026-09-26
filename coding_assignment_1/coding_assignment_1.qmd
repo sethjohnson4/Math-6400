@@ -315,6 +315,12 @@ Include code that displays the first 10 rows of **dfwd** to verify that the conv
 #| label: q08-reshape-weather
 
 # Write your code here
+dfwd <- dfw %>%
+  pivot_longer(cols = Monday:Sunday, names_to = "day", values_to = "max_temp")
+
+
+head(dfwd, n=10)
+  
 ```
 
 #### 9. (8 points) Create a Date column
@@ -335,6 +341,7 @@ Beneath the output, comment on how you know that the creation of the `Date` colu
 #| label: q09-create-date
 
 # Write your code here
+dfwd %>% 
 ```
 
 **Comment:**
