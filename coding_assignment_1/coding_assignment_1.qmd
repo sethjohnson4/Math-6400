@@ -1,6 +1,6 @@
 ---
 title: "Coding Assignment 1: Restaurant Sales and Daily Maximum Temperature"
-author: "Team Member Names"
+author: Seth Johnson and Rachel Wiggins
 date: today
 toc: true
 format:
@@ -77,7 +77,6 @@ Use:
 #| label: q01-load-packages
 library(tidyverse)
 library(arrow)
-# Write your code here
 ```
 
 #### 2. (4 points) Load the restaurant data
@@ -93,7 +92,6 @@ Display the structure and the first five rows of **dfi**.
 dfi <- read_parquet("ities.parquet")
 glimpse(dfi)
 head(dfi, 5)
-# Write your code here
 ```
 
 #### 3. (4 points) Load the weather data
@@ -106,8 +104,6 @@ Display the structure and the first five rows of **dfw**.
 
 ```{r}
 #| label: q03-load-weather-data
-
-# Write your code here
 
 dfw <- read_parquet("max_temp.parquet")
 glimpse(dfw)
@@ -129,7 +125,6 @@ You may want to come back to this task and update it once you start working on t
 ```{r}
 #| label: q04-convert-data-types
 
-# Write your code here
 # The date format here is not very effective for analysis. I will update it to convert it to yy-mm-dd
 
 library(lubridate)
@@ -157,7 +152,6 @@ Display summary statistics for all columns of both data frames.
 ```{r}
 #| label: q05-summary-statistics
 
-# Write your code here
 summary(dfi)
 summary(dfw)
 ```
@@ -179,7 +173,7 @@ Defend that choice in 1–2 sentences for each column with missing values.
 ```{r}
 #| label: q06-missing-values
 
-# Write your code here
+
 library(dplyr)
 
 # finding rows with missing values in dfi
@@ -239,9 +233,7 @@ na_counts_dplyr <- dfi %>%
 summary(dfi_real_clean)
 
 ```
-```{r}
 
-```
 
 **Explanation:**
 
@@ -269,7 +261,6 @@ In 1–2 sentences, defend the choice of the summary measure (sum, mean, or anot
 ```{r}
 #| label: q07-aggregate-daily
 
-# # Write your code here
 dfid <- dfi_real_clean %>%
   group_by(Date) %>%
   summarize(
@@ -279,22 +270,6 @@ dfid <- dfi_real_clean %>%
 
 head(dfid, n=10)
 
-#noticing missing dates so I'm completing missing dates with 0 values for sum_quantity and sum_total
-
-#finding range of dates in dfid
-range(dfid$Date)
-
-#filling dates from 2014-01-04 to 2017-04-05
-dfid <-  dfid %>%
-  complete(
-    Date = seq(min(Date), max(Date), by = "day"),
-    fill = list(
-      sum_quantity = 0,
-      sum_total = 0
-    )
-  )
-
-head(dfid, n=10)
 ```
 
 **Explanation:**
@@ -314,7 +289,7 @@ Include code that displays the first 10 rows of **dfwd** to verify that the conv
 ```{r}
 #| label: q08-reshape-weather
 
-# Write your code here
+# converting to long format
 dfwd <- dfw %>%
   pivot_longer(cols = Monday:Sunday, names_to = "day", values_to = "max_temp")
 
@@ -340,7 +315,7 @@ Beneath the output, comment on how you know that the creation of the `Date` colu
 ```{r}
 #| label: q09-create-date
 
-# Write your code here
+# Calcualting dates
 dfwd <- dfwd %>% 
   mutate(Date = case_when(
     day == "Sunday" ~ WeekStarting,
@@ -384,7 +359,7 @@ In 1–2 sentences, explain why an inner join is the appropriate choice here, an
 ```{r}
 #| label: q10-join-data
 
-# Write your code here
+# inner join by date column
 df <- inner_join(dfid, dfwd, by = "Date")
 
 df <- df %>%
@@ -418,7 +393,7 @@ Create a scatterplot with:
 #| label: fig-maxtemp-totaldue
 #| fig-cap: "Daily maximum temperature and total amount due"
 
-# Write your code here
+# Plotting max temp and total due
 library(ggplot2)
 
 ggplot(df, aes(x = max_temp, y = TotalDue)) +
@@ -442,7 +417,7 @@ Create a scatterplot with:
 #| label: fig-maxtemp-quantity
 #| fig-cap: "Daily maximum temperature and quantity sold"
 
-# Write your code here
+# plotting max temp and quantity sold
 ggplot(df, aes(x = max_temp, y = Quantity)) +
   geom_point() +
   labs(
@@ -463,7 +438,7 @@ Create a scatterplot with:
 #| label: fig-quantity-totaldue
 #| fig-cap: "Quantity sold and total amount due"
 
-# Write your code here
+# plotting quantity sold and total amount due
 ggplot(df, aes(x = Quantity, y = TotalDue)) +
   geom_point() +
   labs(
@@ -485,7 +460,11 @@ Remember that these are observational data, so the scatterplots can show an asso
 
 **Interpretation:**
 
-Write your response here.
+The scatterplot of `max_temp` plotted against `TotalDue` appears to show data oriented horizontally, with fairly consistent variance, with an intercept just above 5000. The fact that the line is horizontal, the data homoscedastic, and that the errors don't seem to demonstrate autocorrelation all seem to suggest that there is not a strong relationship between these two variables.
+
+The situation appears to be similar for `max_temp` and `Quantity` where the data seems like it could again be adequately modeled with just a horizontal line representing the mean. The quantity does not seem to vary as X (max_temp) varies.  
+
+Because the plots of max_temp` and `TotalDue` and `max_temp` and `Quantity` showed similar shape and variance, it is perhaps unsurprising that `Quantity` and `TotalDue`appear to be positively associated. The data seems like it could be modeled here with a straight line with a positive slope. Shapewise, the data is gathered downward toward the place a regression line looks like it should go, with the variance stretching only upward. This suggests the relationship between quantity and total due, which, for each product separately would be perfectly linear (total due is an exact number based on quantity.) But this plot includes all products, which explains the variance of data that appears to be floating upwards off the line: some products are more expensive than others, and the more expensive ones are not purchased as often. 
 
 #### 12. (8 points) Reflection
 
@@ -494,22 +473,22 @@ Briefly answer each question in **1–2 sentences**.
 **1. What did you do well on this assignment?**
 Seth - I thought I did well with getting familiar with R. It is pretty similar to python so I felt like it was pretty quick to pick up. 
 
-Write your response here.
+Rachel - I felt like I did a good job anticipating problems with manipulating the data in certain ways and was able to understand what we were being asked to do. Working with the R code itself also felt pretty easy and natural, although I'm more familiar with Python. 
 
 **2. What was the most challenging part of the assignment?**
 Seth - Getting data formatted in the correct way. I found I had to go back a couple of times and make some minor adjustments. 
 
-Write your response here.
+Rachel - The hardest thing was just the time consuming nature of looking up the syntax of the tidyverse library for various methods. Sometimes it took a while for me to understand the examples given in the documentation. 
 
 **3. What would have improved your experience with this assignment?**
 Seth - I thought this was a really good introduction to R. But I think it would have been cool to do some basics with linear regression. We have been doing that a lot in class so it would have been nice to see. 
 
-Write your response here.
+Rachel - I agree with Seth. Incoporating some OLS or other kinds of linear regressions would have been a good follow up to this assignment. 
 
 **4. What do you still need help with?**
 Seth - I am feeling pretty good with my coding ability and R familiarization, but I know my statistics knowledge is still a little rusty. I have been doing my own reviews. 
 
-Write your response here.
+Rachel - I'm not the greatest at keeping coding languages straight in my head, so I'm sure I'll need to keep looking up specifics of how to code in R so I don't accidentally incorporate some Python or C++.
 
 
 #### 13. (3 point) Render and submit the document
