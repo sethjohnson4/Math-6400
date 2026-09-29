@@ -273,8 +273,8 @@ In 1–2 sentences, defend the choice of the summary measure (sum, mean, or anot
 dfid <- dfi_real_clean %>%
   group_by(Date) %>%
   summarize(
-    sum_quantity = sum(Quantity, na.rm = TRUE), 
-    sum_total = sum(TotalDue, na.rm = TRUE)
+    Quantity= sum(Quantity, na.rm = TRUE), 
+    TotalDue = sum(TotalDue, na.rm = TRUE)
     )
 
 head(dfid, n=10)
@@ -385,10 +385,20 @@ In 1–2 sentences, explain why an inner join is the appropriate choice here, an
 #| label: q10-join-data
 
 # Write your code here
+df <- inner_join(dfid, dfwd, by = "Date")
+
+df <- df %>%
+  arrange(Date)
+
+dim(df)
+head(df)
+
+
 ```
 
 **Comment:**
-
+Inner join will keep only data where there is a match from both data frames. If we were to use left join, then everything is kept from the data frame on the left if it had a match or not. In this case we would have to run
+analysis again to determine what is missing, and what to do with it. That was already previously done and should not have to be repeated. 
 Write your response here.
 
 #### 11. (8 points) Create scatterplots
@@ -409,6 +419,16 @@ Create a scatterplot with:
 #| fig-cap: "Daily maximum temperature and total amount due"
 
 # Write your code here
+library(ggplot2)
+
+ggplot(df, aes(x = max_temp, y = TotalDue)) +
+  geom_point() +
+  labs(
+    title = "Maximum temp and Total Due",
+    x = "Max Temp",
+    y = "Total Due"
+  )
+
 ```
 
 ##### B. Maximum temperature and Quantity
@@ -423,6 +443,13 @@ Create a scatterplot with:
 #| fig-cap: "Daily maximum temperature and quantity sold"
 
 # Write your code here
+ggplot(df, aes(x = max_temp, y = Quantity)) +
+  geom_point() +
+  labs(
+    title = "Maximum temp and Quantity",
+    x = "Max Temp",
+    y = "Quantity"
+  )
 ```
 
 ##### C. Quantity and TotalDue
@@ -437,6 +464,13 @@ Create a scatterplot with:
 #| fig-cap: "Quantity sold and total amount due"
 
 # Write your code here
+ggplot(df, aes(x = Quantity, y = TotalDue)) +
+  geom_point() +
+  labs(
+    title = "Qunatity and total Due",
+    x = "Quantity",
+    y = "Total Due"
+  )
 ```
 
 Below the third scatterplot, identify whether there appears to be a relationship for each pair of variables:
