@@ -492,18 +492,22 @@ Write your response here.
 Briefly answer each question in **1–2 sentences**.
 
 **1. What did you do well on this assignment?**
+Seth - I thought I did well with getting familiar with R. It is pretty similar to python so I felt like it was pretty quick to pick up. 
 
 Write your response here.
 
 **2. What was the most challenging part of the assignment?**
+Seth - Getting data formatted in the correct way. I found I had to go back a couple of times and make some minor adjustments. 
 
 Write your response here.
 
 **3. What would have improved your experience with this assignment?**
+Seth - I thought this was a really good introduction to R. But I think it would have been cool to do some basics with linear regression. We have been doing that a lot in class so it would have been nice to see. 
 
 Write your response here.
 
 **4. What do you still need help with?**
+Seth - I am feeling pretty good with my coding ability and R familiarization, but I know my statistics knowledge is still a little rusty. I have been doing my own reviews. 
 
 Write your response here.
 
