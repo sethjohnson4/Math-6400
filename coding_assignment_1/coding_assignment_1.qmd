@@ -90,7 +90,7 @@ Display the structure and the first five rows of **dfi**.
 ```{r}
 #| label: q02-load-restaurant-data
 dfi <- read_parquet("ities.parquet")
-glimpse(dfi)
+dim(dfi) # for the structure, will output rows then columns
 head(dfi, 5)
 ```
 
@@ -106,8 +106,8 @@ Display the structure and the first five rows of **dfw**.
 #| label: q03-load-weather-data
 
 dfw <- read_parquet("max_temp.parquet")
-glimpse(dfw)
-head(dfw)
+dim(dfw)
+head(dfw, 5)
 ```
 
 #### 4. (8 points) Check and convert data types
@@ -132,16 +132,18 @@ library(lubridate)
 dfw <- dfw %>%
   mutate(WeekStarting = mdy(WeekStarting))
 
-glimpse(dfw)
+head(dfw, 5)
 
 #doing the same thing for dfi
 dfi <-  dfi %>% 
   mutate(Date = mdy(Date))
 
-glimpse(dfi)
+head(dfi, 5)
 ```
 
 **Comment:**
+From looking at the first five rows of each data frame, the date was give in a chr format. chr is not sufficient for analysis, so I knew if we were to use dates in any analysis this will need to be changed. 
+I updated the format using a function with the mutate command to give an R object of the date. I did this with both data frames. Upon first glance this was the only change I thought would be necessary at this time.
 
 Write your response here.
 
@@ -483,7 +485,7 @@ Rachel - The hardest thing was just the time consuming nature of looking up the 
 **3. What would have improved your experience with this assignment?**
 Seth - I thought this was a really good introduction to R. But I think it would have been cool to do some basics with linear regression. We have been doing that a lot in class so it would have been nice to see. 
 
-Rachel - I agree with Seth. Incoporating some OLS or other kinds of linear regressions would have been a good follow up to this assignment. 
+Rachel - I agree with Seth. Incorporating some OLS or other kinds of linear regressions would have been a good follow up to this assignment. 
 
 **4. What do you still need help with?**
 Seth - I am feeling pretty good with my coding ability and R familiarization, but I know my statistics knowledge is still a little rusty. I have been doing my own reviews. 
