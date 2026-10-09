@@ -1,0 +1,306 @@
+---
+title: "HW 3"
+subtitle: "Modeling State Murder Rates with Tidy Multiple Linear Regression"
+author: "Your Name"
+date: today
+
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    toc-expand: true
+    toc-title: "Project contents"
+    theme: cosmo
+    code-tools: true
+    self-contained: true
+    embed-resources: true
+    df-print: paged
+    html-math-method: katex
+
+execute:
+  echo: true
+  warning: false
+  message: false
+  fig-width: 7
+  fig-height: 4.5
+
+knitr:
+  opts_chunk:
+    comment: "#>"
+    collapse: true
+---
+
+::: {.callout-important}
+## Course information
+
+- Course: Math 4400/6400, Fall 2026
+- Instructor: Dr. Jishan Ahmed, Department of Mathematics, Weber State University
+- Submit: your completed `.qmd` file and the rendered `.html` file
+:::
+
+
+# Overview
+
+Consider the crime data stored in `crime.csv`. We would like to understand how murder rate is related to the other variables in the dataset. Note that `state` is the subject here; it is not a predictor, and `region` is a qualitative variable.
+
+**Task 1.** Build a multiple linear regression model to predict murder rate based on the other variables. The final best model should have all the important variables and it should not have any unimportant variables (use the `anova()` function to compare nested models and to decide which set of predictors can be dropped). Once all the important variables are identified, be sure to explore the significance of pairwise interactions between them as well (using the `anova()` function again). Finally, perform model diagnostics to check the standard model assumptions (normality, constant variance and independence of errors) using the visualization tools (normal QQ plot, residual plot and time series plot) and perform any transformations needed to obtain a model for which the assumptions reasonably hold (e.g. if the variance of errors increases when plotted against fitted values, try transforming y (murder rate) using `log()` or `sqrt()` functions).
+
+**Task 2.** Use your final model to predict murder rate of a state whose predictor values are set at the average in the data for a quantitative predictor and the most frequent category for a qualitative predictor.
+
+#### Quick Render Check
+
+Run the code below and render your Quarto document.  
+If the plot appears in the HTML file, your document is rendering R output correctly.
+
+```{r}
+#| label: render-check
+#| echo: true
+
+plot(
+  cars,
+  main = "Quarto Render Check",
+  xlab = "Speed",
+  ylab = "Stopping Distance"
+)
+```
+
+
+# Tidy regression approach
+
+Solve both tasks with the tidymodels workflow from Lab 1 (Linear Regression with {tidymodels}):
+
+- Every model starts from the parsnip specification `lm_spec` and is fit with `fit()`. Do not call `lm()` directly.
+- Use `tidy()` to view coefficients and `augment()` to get fitted values and residuals.
+- Use `extract_fit_engine()` when a function needs the underlying `lm` object, such as `anova()` and `autoplot()`.
+- Use $\alpha = 0.05$ for every test.
+
+
+# Task 1: Building the model
+
+## 1. Load the packages
+
+```{r}
+#| label: q01-load-packages
+
+library(tidyverse)   # readr, dplyr, ggplot2
+library(tidymodels)  # parsnip, broom
+library(here)        # project-relative file paths
+library(ggfortify)   # autoplot() diagnostic plots for lm objects
+```
+
+::: {.callout-warning}
+## Do not install packages inside this file
+
+If a package is missing, install it from the Tools tab in RStudio or by running the following line in the R Console (not in this file):
+
+`install.packages(c("tidyverse", "tidymodels", "here", "ggfortify"))`
+:::
+
+## 2. (2 point) Load and prepare the data
+
+Place `crime.csv` in a folder named `data` inside your RStudio project folder. 
+
+```{r}
+#| label: q02-load-data
+# Your code here
+```
+
+## 3. (4 point) Specify the model
+
+```{r}
+#| label: q03-model-spec
+# Your code here
+```
+
+## 4. (4 point) Fit the full model
+
+Fit a model named `fit_full` that uses all of the other variables in `crime_df` to predict murder rate. Display its coefficients with `tidy()`.
+
+```{r}
+#| label: q04-full-model
+
+# Your code here
+
+```
+
+
+## 5. (10 point) Use `anova()` to drop the unimportant predictors
+
+Two models are nested when the smaller model can be obtained by deleting terms from the larger model. `anova(smaller, larger)` tests whether the deleted terms are needed. A large p-value means the predictor(s) can be dropped.
+
+1. Start from `fit_full`.
+2. Choose the predictor with the largest p-value in `tidy()`. 
+3. Fit the model without that predictor and compare the two models with `anova()`.
+4. If $p > 0.05$, drop the predictor and repeat from the smaller model. If $p \le 0.05$, keep it.
+5. Remove one predictor at a time. Stop when every remaining predictor is important.
+6. Name the resulting model `fit_main`.
+
+
+```{r}
+#| label: q05-anova-selection
+
+# Your code here
+
+```
+
+
+Record each comparison. Add rows as needed.
+
+| Step | Predictor tested | F | p-value | Decision (drop or keep) |
+|---|---|---:|---:|---|
+| 1 | | | | |
+| 2 | | | | |
+| 3 | | | | |
+| 4 | | | | |
+
+**Reflection** Using the p-values from your `anova()` comparisons, explain why each dropped predictor was unimportant.
+
+**Your answer:**
+
+## 6. (10 point) Explore pairwise interactions with `anova()`
+
+Using only the important predictors in `fit_main`, add one pairwise interaction at a time and compare the model with `fit_main` using `anova()`. Keep any interaction with $p \le 0.05$. If you keep an interaction, also keep its two main effects. Name your model `fit_selected`. If no interaction is significant, `fit_selected` is the same as `fit_main`.
+
+```{r}
+#| label: q06-interactions
+
+# Your code here
+
+```
+
+
+| Interaction tested | F | p-value | Significant? |
+|---|---:|---:|---|
+| | | | |
+| | | | |
+| | | | |
+
+**Reflection** Which pairwise interactions, if any, are significant? Use the `anova()` results to support your answer and write the formula of `fit_selected`.
+
+**Your answer:**
+
+## 7. (10 point) Model diagnostics
+
+Check the assumptions of `fit_selected` with the three required plots:
+
+a. Residual plot (residuals vs fitted values) to check constant variance.
+b. Normal QQ plot to check normality of the errors.
+c. Time series plot of the residuals (residuals in observation order, connected by a line) to check independence of the errors.
+
+```{r}
+#| label: q07-diagnostics
+
+# Your code here
+
+```
+
+
+**Reflection** For each assumption (normality, constant variance, and independence of errors), describe what you see in the corresponding plot and state whether the assumption reasonably holds.
+
+**Your answer:**
+
+## 8. (5 point) Transform the response if needed
+
+If the variance of the residuals increases with the fitted values, or the QQ plot shows a clear departure from normality, transform the murder rate with `log()` or `sqrt()`.
+
+a. Add the transformed response as a new column in `crime_df`.
+b. Refit the model with the same terms as `fit_selected`, using the transformed response.
+c. Repeat the three diagnostic plots from Step 7.
+d. Name your final model `fit_final`. If no transformation is needed, `fit_final` is the same as `fit_selected`.
+
+```{r}
+#| label: q08-transform
+
+# Your code here
+
+```
+
+
+**Reflection** Which transformation did you use, if any, and why? Do the assumptions reasonably hold for `fit_final`? Write the formula of `fit_final`.
+
+**Your answer:**
+
+# Task 2: Prediction
+
+## 9. (5 point) Build the typical state
+
+Create a one-row tibble named `typical_state` in which each quantitative predictor equals its average in the data and `region` equals its most frequent category.
+
+```{r}
+#| label: q09-typical-state
+
+# Your code here
+
+```
+
+
+## 10. (4 point) Predict the murder rate
+
+Use `fit_final` and `predict()` to predict the murder rate for `typical_state`. If you transformed the response, convert the prediction back to the murder-rate scale: use `exp()` for a log response, or square the prediction for a square-root response.
+
+```{r}
+#| label: q10-prediction
+
+# Your code here
+
+```
+
+
+**Reflection** Report the predictor values of the typical state and its predicted murder rate on the original scale.
+
+**Your answer:**
+
+
+
+#### 11. (8 points) Reflection
+
+Briefly answer each question in **1–2 sentences**.
+
+**1. What did you do well on this assignment?**
+
+**Your answer:**
+
+**2. What was the most challenging part of the assignment?**
+
+**Your answer:**
+
+**3. What would have improved your experience with this assignment?**
+
+**Your answer:**
+
+**4. What do you still need help with?**
+
+**Your answer:**
+
+
+#### 12. (3 point) Render and submit the document
+
+Make sure to:
+
+1. Save your Quarto document.
+2. Restart your R session.
+3. Render the entire document from beginning to end.
+4. Confirm that the document renders without errors.
+5. Submit both the `.qmd` file and the rendered `.html` file.
+
+# AI use disclosure
+
+State whether you used AI tools. If you did, name the tool(s) and describe what you used them for.
+
+**Your disclosure:**
+
+## Group Dynamics
+
+Ensure equitable distribution of work among group members.
+
+### Grading Criteria
+
+Points will be awarded based on the point allocation listed above.
+
+Points may also be deducted for items not explicitly listed, such as failure to submit the assignment on time or failure to submit a document that renders correctly.
+
+```{r}
+#| label: session
+
+sessionInfo()
+```
