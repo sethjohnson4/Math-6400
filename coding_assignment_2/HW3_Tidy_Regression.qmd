@@ -103,6 +103,10 @@ Place `crime.csv` in a folder named `data` inside your RStudio project folder.
 ```{r}
 #| label: q02-load-data
 # Your code here
+
+df <- read_csv('data/crime.csv')
+
+head(df)
 ```
 
 ## 3. (4 point) Specify the model
