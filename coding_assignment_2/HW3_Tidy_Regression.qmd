@@ -108,12 +108,19 @@ df <- read_csv('data/crime.csv')
 
 head(df)
 ```
+```{r}
+glimpse(df)
+```
+
 
 ## 3. (4 point) Specify the model
 
 ```{r}
 #| label: q03-model-spec
 # Your code here
+lm_spec <- linear_reg() %>% 
+  set_mode("regression") %>% 
+  set_engine("lm")
 ```
 
 ## 4. (4 point) Fit the full model
@@ -124,6 +131,18 @@ Fit a model named `fit_full` that uses all of the other variables in `crime_df` 
 #| label: q04-full-model
 
 # Your code here
+
+#creating model using all variables except state
+fit_full <- lm_spec %>% 
+  fit(murder.rate ~ . - state, data=df)
+
+#show fit object
+fit_full %>%
+  pluck("fit") %>%
+  summary()
+
+#tidy version
+tidy(fit_full)
 
 ```
 
@@ -144,7 +163,103 @@ Two models are nested when the smaller model can be obtained by deleting terms f
 #| label: q05-anova-selection
 
 # Your code here
+#regionSouth has the highest p-value but it is a dummy variable so trying removing 'region' as a whole
+fit_without_region <- lm_spec %>% 
+  fit(murder.rate ~ . - state - region, data=df)
 
+#comparing with anova:
+anova(fit_without_region %>% 
+        pluck("fit"), 
+      fit_full %>% 
+        pluck("fit"))
+
+```
+```{r}
+#trying poverty, since it has the next highest p-value
+fit_without_poverty <- lm_spec %>% 
+  fit(murder.rate ~ . - state - poverty, data=df)
+
+#comparing with anova:
+anova(fit_without_poverty %>% 
+        pluck("fit"),
+      fit_full %>% 
+        pluck("fit"))
+```
+```{r}
+#looking at p-values of model without poverty
+fit_without_poverty %>%
+  pluck("fit") %>%
+  summary()
+
+```
+
+```{r}
+#removing unemployed
+fit_without_poverty_unemployed <- lm_spec %>% 
+  fit(murder.rate ~ . - state - poverty - unemployed, data=df)
+  
+#comparing with fit_without_poverty
+anova(fit_without_poverty %>% 
+        pluck("fit"),
+      fit_without_poverty_unemployed %>% 
+        pluck("fit"))
+```
+```{r}
+#examine new p-values
+fit_without_poverty_unemployed %>%
+  pluck("fit") %>%
+  summary()
+```
+```{r}
+#removing college
+fit_without_poverty_unemployed_college <- lm_spec %>% 
+   fit(murder.rate ~ . - state - poverty - unemployed - college, data=df)
+  
+#comparing with anova
+anova(fit_without_poverty_unemployed %>% 
+        pluck("fit"),
+      fit_without_poverty_unemployed_college %>% 
+        pluck("fit"))
+```
+```{r}
+#examine new p-values
+fit_without_poverty_unemployed_college %>%
+  pluck("fit") %>%
+  summary()
+```
+```{r}
+#removing high.school
+fit_without_poverty_unemployed_college_high.school <- lm_spec %>% 
+   fit(murder.rate ~ . - state - poverty - unemployed - college - high.school, data=df)
+  
+#comparing with anova
+anova(fit_without_poverty_unemployed_college %>% 
+        pluck("fit"),
+      fit_without_poverty_unemployed_college_high.school %>% 
+        pluck("fit"))
+```
+```{r}
+#examine new p-values
+fit_without_poverty_unemployed_college_high.school %>%
+  pluck("fit") %>%
+  summary()
+```
+```{r}
+#trying again dropping region, since last insignificant p-values come from region dummy variables
+fit_with_single.parent_metropolitan <- lm_spec %>% 
+   fit(murder.rate ~ single.parent + metropolitan, data=df)
+  
+#comparing with anova
+anova(fit_without_poverty_unemployed_college_high.school %>% 
+        pluck("fit"),
+      fit_with_single.parent_metropolitan %>% 
+        pluck("fit"))
+```
+```{r}
+#assigning final model
+fit_main <- fit_without_poverty_unemployed_college_high.school
+
+tidy(fit_main)
 ```
 
 
@@ -152,14 +267,17 @@ Record each comparison. Add rows as needed.
 
 | Step | Predictor tested | F | p-value | Decision (drop or keep) |
 |---|---|---:|---:|---|
-| 1 | | | | |
-| 2 | | | | |
-| 3 | | | | |
-| 4 | | | | |
+| 1 | region | 4.8407 | 0.005749 | keep |
+| 2 | poverty | 0.3189 | 0.5754 | drop |
+| 3 | poverty & unemployed | 0.9928 | 0.3249 | drop |
+| 4 | poverty & unemployed & college | 0.9436 | 0.3369 | drop |
+| 5 | poverty & unemployed & college & high.school | 2.5724 | 0.1161 | drop |
+| 6 | poverty & unemployed & college & high.school & region | 6.122 | 0.001425 | keep |
 
 **Reflection** Using the p-values from your `anova()` comparisons, explain why each dropped predictor was unimportant.
 
 **Your answer:**
+Poverty, unemployed, college, and high.school were unimportant to the model because they did not improve the fit of the lm model. The p-values were above the 0.05 threshold, meaning that we fail reject the null hypothesis that these variables do not have an association with murder rate. Region was a bit tricky because some of the dummy variables seemed statistically insignificant while regionNortheast seemed quite significant from the beginning. After comparing models where region was removed with those where it remains, it eventually becomes clear, however, that region is a variable that we should leave in the final model. 
 
 ## 6. (10 point) Explore pairwise interactions with `anova()`
 
@@ -169,19 +287,55 @@ Using only the important predictors in `fit_main`, add one pairwise interaction 
 #| label: q06-interactions
 
 # Your code here
+#checking interaction between single.parent and metropolitan
+fit_single.parent_metropolitan <- lm_spec %>% fit(
+  murder.rate ~ single.parent*metropolitan + region, data=df)
 
+#comparing with anova
+anova(fit_main %>% 
+        pluck("fit"),
+      fit_single.parent_metropolitan %>% 
+        pluck("fit"))
+
+```
+```{r}
+#checking interaction between single.parent and region
+fit_single.parent_region <- lm_spec %>% fit(
+  murder.rate ~ single.parent*region + metropolitan, data=df)
+
+#comparing with anova
+anova(fit_main %>% 
+        pluck("fit"),
+      fit_single.parent_region %>% 
+        pluck("fit"))
+```
+```{r}
+#checking interaction between metropolitan and region
+fit_metropolitan_region <- lm_spec %>% fit(
+  murder.rate ~ metropolitan*region + single.parent, data=df)
+
+#comparing with anova
+anova(fit_main %>% 
+        pluck("fit"),
+      fit_metropolitan_region %>% 
+        pluck("fit"))
+```
+```{r}
+#none of the interactions were significant so:
+fit_selected <- fit_main
 ```
 
 
 | Interaction tested | F | p-value | Significant? |
 |---|---:|---:|---|
-| | | | |
-| | | | |
-| | | | |
+| single.parent * metropolitan | 3.6985 | 0.0611 | Not Significant |
+| single.parent * region | 0.6879 | 0.5646 | Not Significant |
+| metropolitan * region | 0.4997 | 0.6846 | Not Significant |
 
 **Reflection** Which pairwise interactions, if any, are significant? Use the `anova()` results to support your answer and write the formula of `fit_selected`.
 
 **Your answer:**
+None if the interactions between the three independent variables proved to be statistically significant, so changing the regression to add interaction variables didn't make sense. The p-values were all above the 0.05 threshold (0.0611, 0.5646, 0.6846, respectively) which means that we fail to reject the null hypotheses that these interactions have an association with murder.rate
 
 ## 7. (10 point) Model diagnostics
 
