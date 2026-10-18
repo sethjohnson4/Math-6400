@@ -453,19 +453,28 @@ Briefly answer each question in **1–2 sentences**.
 
 **1. What did you do well on this assignment?**
 
+
 **Your answer:**
+Seth
+I thought this assignment went well in determining a model, and then using that model for a prediction. It aligned well with what we did in class and gave a good picture of what we are doing. 
 
 **2. What was the most challenging part of the assignment?**
 
 **Your answer:**
+Seth
+The most challenging part I had was simply keeping organized with the models, and learning how to use some of the R functions. I ran into some issues that took some trouble shooting because I added a variable by mistake, or I did not fully understand the R function. After further research this was solved without an issue.
 
 **3. What would have improved your experience with this assignment?**
 
 **Your answer:**
+Seth
+In the future I do think an assignment that is less guided would be useful. I would like to focus more on the math aspect in class and of the models and how to analyze them and less coding. A couple of these guided assignments are really nice but having one that is less guided where the goal is to find a prediction model would be nice. Giving some direction on methods that may be beneficial or required methods to use, but leaving the process and exploration up to the students. 
 
 **4. What do you still need help with?**
 
 **Your answer:**
+Seth
+I felt pretty good with this assignment, but I do know I need to do more research about the the R functions and libraries, to make sure I know how to use them before I begin. That would have mitigated some of the issues I ran into. 
 
 
 #### 12. (3 point) Render and submit the document
