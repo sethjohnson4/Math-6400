@@ -335,7 +335,7 @@ fit_selected <- fit_main
 **Reflection** Which pairwise interactions, if any, are significant? Use the `anova()` results to support your answer and write the formula of `fit_selected`.
 
 **Your answer:**
-None if the interactions between the three independent variables proved to be statistically significant, so changing the regression to add interaction variables didn't make sense. The p-values were all above the 0.05 threshold (0.0611, 0.5646, 0.6846, respectively) which means that we fail to reject the null hypotheses that these interactions have an association with murder.rate
+None of the interactions between the three independent variables proved to be statistically significant, so changing the regression to add interaction variables didn't make sense. The p-values were all above the 0.05 threshold (0.0611, 0.5646, 0.6846, respectively) which means that we fail to reject the null hypotheses that these interactions have an association with murder.rate
 
 ## 7. (10 point) Model diagnostics
 
@@ -350,12 +350,39 @@ c. Time series plot of the residuals (residuals in observation order, connected 
 
 # Your code here
 
+# a. Residual Plot
+fit_selected_extracted <- extract_fit_engine(fit_selected)
+plot(fit_selected_extracted, which = 1)
+
+# b. Normal QQ
+plot(fit_selected_extracted, which = 2)
+
+# c. Time series plot of the residuals
+residuals_fit <- residuals(fit_selected_extracted)
+
+plot(
+  residuals_fit,
+  type = "l",
+  xlab = "Observation Order",
+  ylab = "Residuals",
+  main = "Residuals vs. Observation Order"
+)
+
+abline(h = 0, col = "red", lty = 2)
 ```
 
 
 **Reflection** For each assumption (normality, constant variance, and independence of errors), describe what you see in the corresponding plot and state whether the assumption reasonably holds.
 
 **Your answer:**
+a. 
+From observation of the the plot for the residuals vs fitted, the homoscedasticity assumption holds. The spread of residuals are both above and below the range of fitted values. There is no obvious cone shape, which implies that the residuals are reasonably constant. 
+
+b.
+The normality assumption is reasonably satisfied, but some data points may require further investigation. Majority of the data points fall very close to the line, but near the ends there is more deviation. This was also seen in the previous graph. 8, 16, and 18 are possible outliers and may need to be investigated. 
+
+c. 
+Overall, there is no clear evidence of dependence of errors from the plot. The residuals do fluctuate above and below zero, however, there are stretches where residuals remain clustered on the positive and negative. However this does not appear to be enough justification to reasonably assume a violation of independence of errors.  
 
 ## 8. (5 point) Transform the response if needed
 
@@ -370,13 +397,19 @@ d. Name your final model `fit_final`. If no transformation is needed, `fit_final
 #| label: q08-transform
 
 # Your code here
-
+fit_final <- lm_spec %>%
+  fit(
+    murder.rate ~ single.parent + metropolitan + region,
+    data = df
+  )
+formula(extract_fit_engine(fit_final))
 ```
 
 
 **Reflection** Which transformation did you use, if any, and why? Do the assumptions reasonably hold for `fit_final`? Write the formula of `fit_final`.
 
 **Your answer:**
+From observation of the plots, I do not see any reason to transform the model further. I did could not reasonably assume that any assumptions were violated from observations of the plots. Due to this I will keep the model as it is. I did refit the model, I had some errors in task 10 and this solved it. 
 
 # Task 2: Prediction
 
@@ -388,7 +421,12 @@ Create a one-row tibble named `typical_state` in which each quantitative predict
 #| label: q09-typical-state
 
 # Your code here
-
+typical_state <- df %>%
+  summarise(
+    single.parent = mean(single.parent, na.rm = TRUE),
+    metropolitan = mean(metropolitan, na.rm = TRUE),
+    region = names(which.max(table(region)))
+  )
 ```
 
 
@@ -400,14 +438,13 @@ Use `fit_final` and `predict()` to predict the murder rate for `typical_state`. 
 #| label: q10-prediction
 
 # Your code here
+predict(fit_final, new_data = typical_state)
 
 ```
-
-
 **Reflection** Report the predictor values of the typical state and its predicted murder rate on the original scale.
 
 **Your answer:**
-
+The predicted murder rate for a typical state is approximately 5.428. This is based on the average value of the predictors and the most frequent region.
 
 
 #### 11. (8 points) Reflection
