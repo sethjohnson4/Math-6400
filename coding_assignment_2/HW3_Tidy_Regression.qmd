@@ -376,7 +376,7 @@ abline(h = 0, col = "red", lty = 2)
 
 **Your answer:**
 a. 
-From observation of the the plot for the residuals vs fitted, the homoscedasticity assumption holds. The spread of residuals are both above and below the range of fitted values. There is no obvious cone shape, which implies that the residuals are reasonably constant. 
+From observation of the plot for the residuals vs fitted, the homoscedasticity assumption holds. The spread of residuals are both above and below the range of fitted values. There is no obvious cone shape, which implies that the residuals are reasonably constant. 
 
 b.
 The normality assumption is reasonably satisfied, but some data points may require further investigation. Majority of the data points fall very close to the line, but near the ends there is more deviation. This was also seen in the previous graph. 8, 16, and 18 are possible outliers and may need to be investigated. 
@@ -409,7 +409,7 @@ formula(extract_fit_engine(fit_final))
 **Reflection** Which transformation did you use, if any, and why? Do the assumptions reasonably hold for `fit_final`? Write the formula of `fit_final`.
 
 **Your answer:**
-From observation of the plots, I do not see any reason to transform the model further. I did could not reasonably assume that any assumptions were violated from observations of the plots. Due to this I will keep the model as it is. I did refit the model, I had some errors in task 10 and this solved it. 
+From observation of the plots, I do not see any reason to transform the model further. I could not reasonably assume that any assumptions were violated from observations of the plots. Due to this I will keep the model as it is. I did refit the model, I had some errors in task 10 and this solved it. 
 
 # Task 2: Prediction
 
@@ -455,26 +455,34 @@ Briefly answer each question in **1–2 sentences**.
 
 
 **Your answer:**
-Seth
+Seth: 
 I thought this assignment went well in determining a model, and then using that model for a prediction. It aligned well with what we did in class and gave a good picture of what we are doing. 
+Rachel: 
+I think we did a good job of first figuring out what variables would be most beneficial to our model and then examining the residuals for evidence of covariance. 
 
 **2. What was the most challenging part of the assignment?**
 
 **Your answer:**
-Seth
+Seth: 
 The most challenging part I had was simply keeping organized with the models, and learning how to use some of the R functions. I ran into some issues that took some trouble shooting because I added a variable by mistake, or I did not fully understand the R function. After further research this was solved without an issue.
+Rachel: 
+The hardest part for me was also figuring out the R equivalent of some of the Python functions I am more familiar with. As I am using R more it seems pretty straightforward, though, especially tidyverse which does simplify a lot of the dataframe manipulation
 
 **3. What would have improved your experience with this assignment?**
 
 **Your answer:**
-Seth
+Seth: 
 In the future I do think an assignment that is less guided would be useful. I would like to focus more on the math aspect in class and of the models and how to analyze them and less coding. A couple of these guided assignments are really nice but having one that is less guided where the goal is to find a prediction model would be nice. Giving some direction on methods that may be beneficial or required methods to use, but leaving the process and exploration up to the students. 
+Rachel:  
+I think it would be good to have some coding homework assignments that are not team projects. I feel like the point of these may be to guide us step by step through the process of completing a task, but when you're splitting up work with a partner, I feel like it somewhat defeats the purpose. Like Seth, I think it would also be nice to have a coding assignment that gives a bit of freedom with how we use some of the coding in R we are learning. 
 
 **4. What do you still need help with?**
 
 **Your answer:**
-Seth
+Seth: 
 I felt pretty good with this assignment, but I do know I need to do more research about the the R functions and libraries, to make sure I know how to use them before I begin. That would have mitigated some of the issues I ran into. 
+Rachel:  
+I think I understand pretty well the content and execution of this assignment. I feel like going over the math in class, maybe with opportunities to work through some problems or scenarios would be good though so we can see the math behind all of this a bit more clearly. 
 
 
 #### 12. (3 point) Render and submit the document
@@ -492,6 +500,7 @@ Make sure to:
 State whether you used AI tools. If you did, name the tool(s) and describe what you used them for.
 
 **Your disclosure:**
+We didn't use AI. 
 
 ## Group Dynamics
 
