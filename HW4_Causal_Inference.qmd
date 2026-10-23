@@ -1,0 +1,286 @@
+---
+title: "Homework 4: Causal Inference"
+subtitle: "Do Mosquito Nets Reduce Malaria Risk?"
+author: "Your Name"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    toc-expand: true
+    toc-title: "Project contents"
+    theme: cosmo
+    code-tools: true
+    embed-resources: true
+    df-print: paged
+    html-math-method: katex
+execute:
+  echo: true
+  warning: false
+  message: false
+  fig-width: 7
+  fig-height: 4.5
+knitr:
+  opts_chunk:
+    comment: "#>"
+    collapse: true
+---
+
+::: {.callout-important}
+## Course information
+
+- Course: MATH 4400/6400, Fall 2026
+- Instructor: Dr. Jishan Ahmed, Department of Mathematics, Weber State University
+- Submit: your completed `.qmd` file and the rendered `.html` file
+- Total: **120 points**
+:::
+
+# Overview
+
+**Causal question:** Does using a mosquito net, compared with not using a net, reduce malaria risk?
+
+You will analyze **simulated observational data** on households. Households were not randomly assigned to use nets. Therefore, differences in malaria risk between net users and nonusers may reflect both the effect of nets and differences in household characteristics.
+
+Your goal is to complete five steps:
+
+1. Specify a causal question.
+2. Draw our assumptions using a causal diagram.
+3. Model our assumptions.
+4. Diagnose our models.
+5. Estimate the causal effect.
+
+Download `net_data.csv` from Canvas and save it in the same folder as this Quarto file.
+
+Relevant variables include:
+
+- `net`: Mosquito net use
+- `malaria_risk`: Malaria risk score (0–100)
+- `income`: Weekly income
+- `health`: Health score (0–100)
+- `temperature`: Nighttime temperature
+- `household`: Household size
+- `eligible`: Free-net program eligibility
+- `resistance`: Insecticide resistance
+
+**Note:** These are simulated observational data, not results of a randomized experiment. The risk score is not a binary malaria diagnosis.
+
+## 1. Load packages and inspect the data (4 points)
+
+Install any missing packages in the R console before rendering. Load the packages below and import `net_data.csv`. Examine the data structure, missing values, and counts of net users and nonusers. Check how `net` is coded before modeling.
+
+```{r}
+#| label: q01-data
+library(tidyverse)
+library(broom)
+
+net_data <- read_csv("net_data.csv")
+
+# Your code here
+```
+
+**Reflection:** How many observations are there? How many used a net? What does `malaria_risk` measure?
+
+**Your answer:**
+
+# Step 1: Specify a causal question (8 points)
+
+## 2. Define the treatment, outcome, and causal estimand (4 points)
+
+State your causal question precisely. Identify (a) the population, (b) the treatment and comparison groups, (c) the outcome and its units, and (d) the time horizon (one year). Define the **average treatment effect (ATE)** in words and using the potential-outcomes expression:
+
+$$ATE = E[Y(1)-Y(0)].$$
+
+**Your answer:**
+
+## 3. Describe the observed association (4 points)
+
+Create a density plot or boxplot of `malaria_risk` by `net` and a table of mean malaria risk in each group. Calculate the unadjusted difference as **mean among net users minus mean among nonusers**.
+
+```{r}
+#| label: q03-unadjusted
+# Your code here
+```
+
+**Reflection:** Which group has lower observed risk? Why might this difference fail to represent a causal effect?
+
+**Your answer:**
+
+# Step 2: Draw our assumptions using a causal diagram (12 points)
+
+## 4. Construct a directed acyclic graph (DAG) using DAGitty (7 points)
+
+Open [DAGitty](https://dagitty.net/dags.html) and create a causal DAG with `net` as the exposure and `malaria_risk` as the outcome.
+
+Include the following proposed causal relationships:
+
+- `malaria_risk` is affected by `net`, `income`, `health`, `temperature`, and `resistance`.
+- `net` is affected by `income`, `health`, `temperature`, `eligible`, and `household`.
+- `eligible` is affected by `income` and `household`.
+- `health` is affected by `income`.
+
+**Instructions:**
+
+1. Create the DAG in DAGitty using the relationships listed above. Include all eight variables.
+2. Identify `net` as the exposure and `malaria_risk` as the outcome.
+3. Export your DAG as a PNG image (or take a screenshot) and save it as `malaria_dag.png` in the same folder as your Quarto file.
+4. Insert the image into your Quarto report using the following Markdown syntax (remove the leading `#` to display it):
+
+```text
+![Causal DAG for mosquito net use and malaria risk](malaria_dag.png)
+```
+
+**Note:** Treat the arrows as causal assumptions, not relationships proven by the data.
+
+## 5. Identify confounding and an adjustment set (5 points)
+
+Use DAGitty to identify a minimal sufficient adjustment set for estimating the total causal effect of `net` on `malaria_risk`.
+
+**Instructions:**
+
+1. Use DAGitty's **Adjustment (total effect)** feature to identify a minimal sufficient adjustment set.
+2. Report the variables in the adjustment set.
+3. Explain why these variables need to be adjusted for.
+4. Explain why some variables in your DAG do not need to be included in the minimal sufficient adjustment set.
+
+**Your answer:**
+
+# Step 3: Model our assumptions (12 points)
+
+## 6. Estimate propensity scores (6 points)
+
+Fit a **logistic regression** that predicts net use from the minimal adjustment set identified in Step 2. Calculate each household's estimated propensity score, $\hat e(X_i)=P(A_i=1\mid X_i)$, where $A_i=1$ indicates net use. Make sure your treatment coding matches this definition. Show a summary of the propensity scores and their range by treatment group.
+
+```{r}
+#| label: q06-propensity
+# Your code here
+```
+
+**Reflection:** What does a propensity score represent? Is it a predicted malaria risk?
+
+**Your answer:**
+
+## 7. Calculate inverse probability weights (6 points)
+
+Compute **ATE inverse probability weights (IPW)**:
+
+$$w_i = \frac{A_i}{\hat e(X_i)}+\frac{1-A_i}{1-\hat e(X_i)}.$$
+
+Store the propensity scores and weights in a new data frame. Show the first six observations with treatment status, propensity score, and weight. Check that probabilities are strictly between 0 and 1 before calculating weights.
+
+```{r}
+#| label: q07-weights
+# Your code here
+```
+
+**Reflection:** Why does an observation with a low probability of receiving its observed treatment receive a larger weight?
+
+**Your answer:**
+
+# Step 4: Diagnose our models (10 points)
+
+## 8. Check propensity score overlap (5 points)
+
+Plot propensity score distributions for net users and nonusers using density plots or histograms. Clearly distinguish the two groups. Discuss whether their propensity scores overlap and identify any regions with limited overlap.
+
+```{r}
+#| label: q08-overlap
+# Your code here
+```
+
+**Reflection:** Why is overlap important when estimating the average treatment effect?
+
+**Your answer:**
+
+## 9. Examine inverse probability weights (5 points)
+
+Plot a histogram of the inverse probability weights. Report their minimum, median, maximum, and 99th percentile. Identify whether any households receive much larger weights than most others.
+
+```{r}
+#| label: q09-weight-diagnostics
+# Your code here
+```
+
+**Reflection:** Why can extreme weights make a causal effect estimate unstable? What might you investigate if you find unusually large weights?
+
+**Your answer:**
+
+# Step 5: Estimate the causal effect (10 points)
+
+## 10. Fit the weighted outcome model (6 points)
+
+Fit a weighted linear regression of `malaria_risk` on `net` using the inverse probability weights. Report the estimated coefficient for net use and compare it with the unadjusted difference from Step 1. Interpret the **sign, magnitude, and units** of the weighted estimate. You are not required to calculate a confidence interval.
+
+```{r}
+#| label: q10-effect
+# Your code here
+```
+
+**Reflection:** How did the estimated effect change after weighting? What does this suggest about confounding in the original comparison?
+
+**Your answer:**
+
+## 11. Interpret the result and its limitations (4 points)
+
+In 2–3 sentences, answer the following:
+
+1. What is your estimated ATE, in malaria-risk-score points?
+2. Does the estimate suggest a protective or harmful effect of net use?
+3. Could an unmeasured confounder change your conclusion? Explain briefly.
+
+**Your answer:**
+
+# Reflection (6 points)
+
+Answer each question in **1–2 sentences**.
+
+**1. What did you do well on this assignment?**
+
+**Your answer:**
+
+**2. What was the most challenging part of this assignment?**
+
+**Your answer:**
+
+**3. What would have improved your experience with this assignment?**
+
+**Your answer:**
+
+**4. What do you still need help with?**
+
+**Your answer:**
+
+# Render and submit (3 points)
+
+Save your Quarto document, restart your R session, render the document from beginning to end, and confirm that the HTML contains all code output, plots, and written responses. Submit **both** the `.qmd` and rendered `.html` files. Keep `net_data.csv` and `malaria_dag.png` in the same folder while rendering.
+
+#### Quick Render Check
+
+Run the code below and render your Quarto document.  
+If the plot appears in the HTML file, your document is rendering R output correctly.
+
+```{r}
+#| label: render-check
+#| echo: true
+
+plot(
+  cars,
+  main = "Quarto Render Check",
+  xlab = "Speed",
+  ylab = "Stopping Distance"
+)
+```
+
+# AI use disclosure
+
+State whether you used AI tools. If yes, name the tool(s), explain what you used them for, and describe how you verified the results. Your submitted code and interpretations must reflect your own understanding.
+
+**Your disclosure:**
+
+# Group dynamics
+
+If working in a group, distribute the work equitably. Every group member should be able to explain the DAG, weighting, diagnostics, and causal interpretation.
+
+```{r}
+#| label: session
+sessionInfo()
+```
