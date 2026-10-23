@@ -1,7 +1,7 @@
 ---
 title: "Homework 4: Causal Inference"
 subtitle: "Do Mosquito Nets Reduce Malaria Risk?"
-author: "Your Name"
+author: Rachel Wiggins and Seth Johnson
 date: today
 format:
   html:
@@ -77,10 +77,23 @@ net_data <- read_csv("net_data.csv")
 
 # Your code here
 ```
+```{r}
+#examine data structure
+glimpse(net_data)
+
+#checking for missing values
+net_data %>% 
+  map(is.na) %>% 
+  map(sum)
+
+#counting values in 'net'
+net_data %>%
+  count(net)
+```
 
 **Reflection:** How many observations are there? How many used a net? What does `malaria_risk` measure?
 
-**Your answer:**
+**Your answer:** There are 1752 observations with no missing values. 454 used a net and 1298 did not. 'malaria_risk' is a risk score from 0-100 that indicates how much the observation was at risk of contracting malaria. It doesn't seem clear whether this is a score calculated from the other variables in the dataframe, or whether this is assigned outside the system. 
 
 # Step 1: Specify a causal question (8 points)
 
