@@ -72,6 +72,7 @@ Install any missing packages in the R console before rendering. Load the package
 #| label: q01-data
 library(tidyverse)
 library(broom)
+library(dplyr)
 
 net_data <- read_csv("net_data.csv")
 
@@ -210,11 +211,42 @@ Fit a **logistic regression** that predicts net use from the minimal adjustment 
 ```{r}
 #| label: q06-propensity
 # Your code here
+#creating logistic regression model using net as the outcome variable with parameters income, health and temperature
+log_reg <- glm(
+  net ~ income + health + temperature, 
+  data=net_data,
+  family=binomial()
+)
 ```
+```{r}
+#calculating propensity scores ('response' calculates propensity scores)
+prop_scores <- predict(
+  log_reg, type = 'response')
+
+#adding propensity scores to df
+net_data <- net_data %>% 
+  mutate(prop_scores)
+
+#displaying summary and range by treatment group 
+net_data %>% 
+  group_by(net) %>% 
+  summarize(
+    n = n(),
+    mean = mean(prop_scores),
+    median = median(prop_scores),
+    sd = sd(prop_scores),
+    min = min(prop_scores),
+    max = max(prop_scores)
+    
+  )
+
+```
+
 
 **Reflection:** What does a propensity score represent? Is it a predicted malaria risk?
 
 **Your answer:**
+The propensity score is the probability of a particular observation appearing in the treatment group. No, it is not the predicted malaria risk. It is simply the probability of that household to be in the group that used a net. 
 
 ## 7. Calculate inverse probability weights (6 points)
 
