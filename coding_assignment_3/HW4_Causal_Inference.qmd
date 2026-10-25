@@ -113,6 +113,8 @@ c) Outcome variable: malaria_risk
    Units: A risk score ranging from 0-100
 d) Time Horizon: One year, estimate the effects of a mosquito net over the course of one year
 
+The ATE is the difference in the average malaria_risk score between those who used a net and those who didn't, where y=1 is those who did and y=0 is those who didn't. The ATE would then look like the model above: ATE = E[malaria_risk value of net users] - E[malaria_risk value of non-net users] = E[Y(1)] - E[Y(0)] = E[Y(1)-Y(0)] 
+
 ## 3. Describe the observed association (4 points)
 
 Create a density plot or boxplot of `malaria_risk` by `net` and a table of mean malaria risk in each group. Calculate the unadjusted difference as **mean among net users minus mean among nonusers**.
@@ -195,7 +197,10 @@ Use DAGitty to identify a minimal sufficient adjustment set for estimating the t
 4. Explain why some variables in your DAG do not need to be included in the minimal sufficient adjustment set.
 
 **Your answer:**
-
+1. They are the pink variables in the DAG above. 
+2. The adjustment set variables are income, temperature, and health
+3. These variables need to be adjusted for because they are confounding variables that open backdoors to estimating the effect of using a net on the malaria_risk score
+4. Other variables like eligible, household and resistance do not need to be included in the minimal sufficient adjustment set because they are either mediating variables (like eligible) or are variables that have an effect on net use, which isn't important in the relationship we are trying to examine. 
 # Step 3: Model our assumptions (12 points)
 
 ## 6. Estimate propensity scores (6 points)
