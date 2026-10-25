@@ -89,6 +89,8 @@ net_data %>%
 #counting values in 'net'
 net_data %>%
   count(net)
+
+head(net_data)
 ```
 
 **Reflection:** How many observations are there? How many used a net? What does `malaria_risk` measure?
@@ -104,6 +106,12 @@ State your causal question precisely. Identify (a) the population, (b) the treat
 $$ATE = E[Y(1)-Y(0)].$$
 
 **Your answer:**
+a) The population is anyone in the target location who is at risk of malaria and could potentially use a mosquito net. 
+b) Treatment group: Individuals who use a mosquito net
+   Comparison group: Individuals who do not use a mosquito net
+c) Outcome variable: malaria_risk
+   Units: A risk score ranging from 0-100
+d) Time Horizon: One year, estimate the effects of a mosquito net over the course of one year
 
 ## 3. Describe the observed association (4 points)
 
@@ -112,11 +120,42 @@ Create a density plot or boxplot of `malaria_risk` by `net` and a table of mean 
 ```{r}
 #| label: q03-unadjusted
 # Your code here
+
+# Boxplot
+ggplot(net_data, aes(x = net, y = malaria_risk)) +
+  geom_boxplot() +
+  labs(
+    title = "Malaria Risk by Mosquito Net Use",
+    x = "Mosquito Net Use (0 = No, 1 = Yes)",
+    y = "Malaria Risk Score (0–100)"
+  ) +
+  theme_minimal()
+
+# Table of mean malaria risk 
+mean_table <- net_data %>%
+  group_by(net) %>%
+  summarise(
+    n = sum(!is.na(malaria_risk)),
+    mean_malaria_risk = mean(malaria_risk, na.rm = TRUE)
+  )
+
+print(mean_table)
+
+mean_users <- mean(net_data$malaria_risk[net_data$net == 1], na.rm = TRUE)
+
+mean_nonusers <- mean(net_data$malaria_risk[net_data$net == 0], na.rm = TRUE)
+
+unadjusted_difference <- mean_users - mean_nonusers
+
+print(unadjusted_difference)
 ```
 
 **Reflection:** Which group has lower observed risk? Why might this difference fail to represent a causal effect?
 
 **Your answer:**
+From observation, it is easy to identify that there is some type of correlation between using a net and a lower malaria risk. By looking at the box plot, when using a mosquito net the median is substantially lower than the median without using a mosquito net. Additionally, the unadjusted difference gave a value of roughly -16, which means that people who use the mosquito net have on average a malaria score that is 16 less than those who do not use the net. 
+
+This is not conclusive enough to say that mosquito nets have a causal relationship with malaria risk. There are many other variables that can also influence malaria risk that are not being addressed here. Income, health, household, temperature, are all variables that can also influence malaria risk. At this point we cannot assume that mosquito nets are decreasing malaria risk just because the median and unadjusted difference is lower. 
 
 # Step 2: Draw our assumptions using a causal diagram (12 points)
 
@@ -138,9 +177,9 @@ Include the following proposed causal relationships:
 3. Export your DAG as a PNG image (or take a screenshot) and save it as `malaria_dag.png` in the same folder as your Quarto file.
 4. Insert the image into your Quarto report using the following Markdown syntax (remove the leading `#` to display it):
 
-```text
+
 ![Causal DAG for mosquito net use and malaria risk](malaria_dag.png)
-```
+
 
 **Note:** Treat the arrows as causal assumptions, not relationships proven by the data.
 
