@@ -291,11 +291,23 @@ Plot propensity score distributions for net users and nonusers using density plo
 ```{r}
 #| label: q08-overlap
 # Your code here
+#creating overlapping density plot
+ggplot(ip_data, aes(x=prop_scores, fill=net)) +
+  geom_density(alpha=0.4) + #transparency of curve
+  scale_fill_manual(values = c("FALSE" = "steelblue", "TRUE" = "coral")) + #color scheme
+  labs( #labels
+      title = "Propensity Score Distribution", 
+      x = "Propensity Score",
+      y = "Density",
+      fill = "Net Use"
+  ) + 
+  theme_bw()
 ```
 
 **Reflection:** Why is overlap important when estimating the average treatment effect?
 
 **Your answer:**
+In our case, we can see that net-users do end up with higher propensity scores on the whole than non-net users. But there is also a decent amount of overlap, and the scores centers for each group are not enormously different. This indicates that there are a decent number of observations with similar propensity scores in both groups. Overlap becomes important for estimating ATE because it means we can make better comparisons between the households that used a net and those who didn't. Essentially it allows us to create a kind of artificial counterfactual (because each household can't both use a net and not use a net, so we can't directly compare outcomes that way.) But we can compare outcomes of observations with similar propensity scores. It doesn't mean the households have identical characteristics, necessarily, but with a similar propensity score, they have a similar overall probability of having appeared in the treatment group. 
 
 ## 9. Examine inverse probability weights (5 points)
 
