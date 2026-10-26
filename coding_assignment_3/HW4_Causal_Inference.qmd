@@ -211,11 +211,11 @@ Fit a **logistic regression** that predicts net use from the minimal adjustment 
 ```{r}
 #| label: q06-propensity
 # Your code here
-#creating logistic regression model using net as the outcome variable with parameters income, health and temperature
+#creating logistic regression model using net as the outcome variable with confounding parameters income, health and temperature
 log_reg <- glm(
   net ~ income + health + temperature, 
   data=net_data,
-  family=binomial()
+  family=binomial(link = 'logit')
 )
 ```
 ```{r}
@@ -246,7 +246,7 @@ net_data %>%
 **Reflection:** What does a propensity score represent? Is it a predicted malaria risk?
 
 **Your answer:**
-The propensity score is the probability of a particular observation appearing in the treatment group. No, it is not the predicted malaria risk. It is simply the probability of that household to be in the group that used a net. 
+The propensity score is the probability of a particular observation getting the treatment. No, it is not the predicted malaria risk. It is simply the probability of that household to be in the group that used a net. 
 
 ## 7. Calculate inverse probability weights (6 points)
 
@@ -259,11 +259,28 @@ Store the propensity scores and weights in a new data frame. Show the first six 
 ```{r}
 #| label: q07-weights
 # Your code here
+#verify propensity scores are between 0 and 1: 
+all(prop_scores > 0 & prop_scores < 1)
+
+#calculating inverse probability weights from propensity scores and creating a new column of them called ip_weights for new data frame ip_data
+ip_data <- net_data %>% 
+  mutate( ip_weights = if_else(
+    net == TRUE,
+    1 / prop_scores, 
+    1 / (1 - prop_scores)
+  )
+)
+
+#showing first 6 observations
+ip_data %>% 
+  select(net, prop_scores, ip_weights) %>% 
+  head(6)
 ```
 
 **Reflection:** Why does an observation with a low probability of receiving its observed treatment receive a larger weight?
 
 **Your answer:**
+Because an observation with a low probability of receiving the treatment that did in fact receive the treatment is an observation whose outcome (having used a net) was not predicted by our model. We want to give observations like these more weight so that the imbalance between treatment and non-treatment groups is corrected. Basically we are removing the effect of potentially confounding variables. In our case those variables are health, temperature and income. We are balancing the differences between high and low income groups, for instance, and the potential impact that might have on having used a net or not. We are doing the same thing with temperature and health. 
 
 # Step 4: Diagnose our models (10 points)
 
