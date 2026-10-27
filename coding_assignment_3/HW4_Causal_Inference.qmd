@@ -273,7 +273,7 @@ ip_data <- net_data %>%
 
 #showing first 6 observations
 ip_data %>% 
-  select(net, prop_scores, ip_weights) %>% 
+  dplyr::select(net, prop_scores, ip_weights) %>% 
   head(6)
 ```
 
@@ -316,6 +316,20 @@ Plot a histogram of the inverse probability weights. Report their minimum, media
 ```{r}
 #| label: q09-weight-diagnostics
 # Your code here
+ggplot(ip_data, aes(x = ip_weights)) +
+  geom_histogram(bins = 30, color = "black", fill = "steelblue") +
+  labs(
+    title = "Distribution of Inverse Probability Weights",
+    x = "Inverse Probability Weight",
+    y = "Frequency"
+  ) +
+  theme_minimal()
+
+quantile(
+  ip_data$ip_weights,
+  probs = c(0, 0.50, 0.99, 1),
+  na.rm = TRUE
+)
 ```
 
 **Reflection:** Why can extreme weights make a causal effect estimate unstable? What might you investigate if you find unusually large weights?
