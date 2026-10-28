@@ -307,7 +307,7 @@ ggplot(ip_data, aes(x=prop_scores, fill=net)) +
 **Reflection:** Why is overlap important when estimating the average treatment effect?
 
 **Your answer:**
-In our case, we can see that net-users do end up with higher propensity scores on the whole than non-net users. But there is also a decent amount of overlap, and the scores centers for each group are not enormously different. This indicates that there are a decent number of observations with similar propensity scores in both groups. Overlap becomes important for estimating ATE because it means we can make better comparisons between the households that used a net and those who didn't. Essentially it allows us to create a kind of artificial counterfactual (because each household can't both use a net and not use a net, so we can't directly compare outcomes that way.) But we can compare outcomes of observations with similar propensity scores. It doesn't mean the households have identical characteristics, necessarily, but with a similar propensity score, they have a similar overall probability of having appeared in the treatment group. 
+In our case, we can see that net-users do end up with higher propensity scores on the whole than non-net users. But there is also a decent amount of overlap, and the scores centers for each group are not enormously different. This indicates that there are a decent number of observations with similar propensity scores in both groups. Overlap becomes important for estimating ATE because it means we can make better comparisons between the households that used a net and those who didn't. Essentially it allows us to create a kind of artificial counter factual (because each household can't both use a net and not use a net, so we can't directly compare outcomes that way.) But we can compare outcomes of observations with similar propensity scores. It doesn't mean the households have identical characteristics, necessarily, but with a similar propensity score, they have a similar overall probability of having appeared in the treatment group. 
 
 ## 9. Examine inverse probability weights (5 points)
 
@@ -330,11 +330,22 @@ quantile(
   probs = c(0, 0.50, 0.99, 1),
   na.rm = TRUE
 )
+
+# boxplot to determine if there are any outliers, and where the inverse probablity weights are sitting
+boxplot(
+  ip_data$ip_weights,
+  main = "Boxplot of Inverse Probability Weights",
+  ylab = "Inverse Probability Weight",
+  col = "lightblue"
+)
+
 ```
 
 **Reflection:** Why can extreme weights make a causal effect estimate unstable? What might you investigate if you find unusually large weights?
 
 **Your answer:**
+
+Extreme weights will cause an unbalanced effect on an estimate. It will cause those houses to have an disproportionately large influence compared to the median. In the boxplot you can see the large difference between houses with large weights, and the median. I would want to investigate why these houses have much higher weights than others. Are there any characteristics they have that other houses do not have? 
 
 # Step 5: Estimate the causal effect (10 points)
 
@@ -345,11 +356,40 @@ Fit a weighted linear regression of `malaria_risk` on `net` using the inverse pr
 ```{r}
 #| label: q10-effect
 # Your code here
+
+ipw_model <- lm(
+  malaria_risk ~ net,
+  data = ip_data,
+  weights = ip_weights
+)
+
+# Display regression results
+summary(ipw_model)
+
+# Extract the coefficient for net use
+coef(ipw_model)["netTRUE"]
+
+# Compare with unadjusted difference from 1
+unadjusted_diff <- with(
+  ip_data,
+  mean(malaria_risk[net == TRUE], na.rm = TRUE) -
+    mean(malaria_risk[net == FALSE], na.rm = TRUE)
+)
+
+# Weighted estimate
+weighted_estimate <- coef(ipw_model)["netTRUE"]
+
+# Compare estimates
+c(
+  Unadjusted_Difference = unadjusted_diff,
+  Weighted_Estimate = weighted_estimate
+)
 ```
 
 **Reflection:** How did the estimated effect change after weighting? What does this suggest about confounding in the original comparison?
 
 **Your answer:**
+First, I would like to note that both weighted and not weighted are in the negative, which does suggest that net users have a lower malaria risk than non-users. After weighting the difference actually increases by roughly 4. This does suggest that net users and non-users may have confounded the original comparison. Adjusting for this in the weighted difference would reduce the effect of confounding. 
 
 ## 11. Interpret the result and its limitations (4 points)
 
