@@ -396,8 +396,13 @@ First, I would like to note that both weighted and not weighted are in the negat
 In 2–3 sentences, answer the following:
 
 1. What is your estimated ATE, in malaria-risk-score points?
+The estimated ATE is -12.4.
+
 2. Does the estimate suggest a protective or harmful effect of net use?
+Yes, the estimation does suggest a protective effect on net use. Those who use nets were found to have a malaria risk score of roughly 12.5 lower than those that do not use nets. 
+
 3. Could an unmeasured confounder change your conclusion? Explain briefly.
+Yes, an unmeasured counfounder is possible to change the conclusion. It is very possible that the households that have access to nets, also have access to better healthcare, better living conditions, or other preventative measures. If these factors are not accounted for then the estimate can remain biased. 
 
 **Your answer:**
 
@@ -406,18 +411,27 @@ In 2–3 sentences, answer the following:
 Answer each question in **1–2 sentences**.
 
 **1. What did you do well on this assignment?**
+Seth:
+I liked being able to investigate into this assignment and learn more about confounding variables. I found that to be very interesting how you can take those into account and I thought that went well. 
 
 **Your answer:**
 
 **2. What was the most challenging part of this assignment?**
+Seth:
+I found understanding the inverse probability weights to be a little tricky. I had to make sure I understood what those meant before I continued with the assignment. 
 
 **Your answer:**
 
 **3. What would have improved your experience with this assignment?**
+Seth:
+I did like this assignment more than some of the previous ones. I felt like we had more freedom to try out different ways of finding the solution. I like having the explanations a little bit vague to give the student more options on how to find the solution. It may also be beneficial to test more than one different type of model, maybe revisit an assignmet later, or do a short assignment where you apply a new model and see if there are any improvements. 
 
 **Your answer:**
 
 **4. What do you still need help with?**
+Seth: 
+I would like to go over more about the exploration process in the class. Considerations you should have, values to take a closer look at, and what may require further investigation. 
+
 
 **Your answer:**
 
