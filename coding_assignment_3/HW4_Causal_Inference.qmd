@@ -202,6 +202,7 @@ Use DAGitty to identify a minimal sufficient adjustment set for estimating the t
 2. The adjustment set variables are income, temperature, and health
 3. These variables need to be adjusted for because they are confounding variables that open backdoors to estimating the effect of using a net on the malaria_risk score
 4. Other variables like eligible, household and resistance do not need to be included in the minimal sufficient adjustment set because they are either mediating variables (like eligible) or are variables that have an effect on net use, which isn't important in the relationship we are trying to examine. 
+
 # Step 3: Model our assumptions (12 points)
 
 ## 6. Estimate propensity scores (6 points)
@@ -307,7 +308,7 @@ ggplot(ip_data, aes(x=prop_scores, fill=net)) +
 **Reflection:** Why is overlap important when estimating the average treatment effect?
 
 **Your answer:**
-In our case, we can see that net-users do end up with higher propensity scores on the whole than non-net users. But there is also a decent amount of overlap, and the scores centers for each group are not enormously different. This indicates that there are a decent number of observations with similar propensity scores in both groups. Overlap becomes important for estimating ATE because it means we can make better comparisons between the households that used a net and those who didn't. Essentially it allows us to create a kind of artificial counter factual (because each household can't both use a net and not use a net, so we can't directly compare outcomes that way.) But we can compare outcomes of observations with similar propensity scores. It doesn't mean the households have identical characteristics, necessarily, but with a similar propensity score, they have a similar overall probability of having appeared in the treatment group. 
+In our case, we can see that net-users do end up with higher propensity scores on the whole than non-net users. But there is also a decent amount of overlap, and the scores centers for each group are not enormously different. This indicates that there are a decent number of observations with similar propensity scores in both groups. Overlap becomes important for estimating ATE because it means we can make better comparisons between the households that used a net and those who didn't. Essentially it allows us to create a kind of counter factual (because each household can't both use a net and not use a net, so we can't directly compare outcomes that way.) But we can compare outcomes of observations with similar propensity scores. It doesn't mean the households have identical characteristics, necessarily, but with a similar propensity score, they have a similar overall probability of having appeared in the treatment group. 
 
 ## 9. Examine inverse probability weights (5 points)
 
@@ -396,44 +397,55 @@ First, I would like to note that both weighted and not weighted are in the negat
 In 2–3 sentences, answer the following:
 
 1. What is your estimated ATE, in malaria-risk-score points?
-The estimated ATE is -12.4.
+
 
 2. Does the estimate suggest a protective or harmful effect of net use?
-Yes, the estimation does suggest a protective effect on net use. Those who use nets were found to have a malaria risk score of roughly 12.5 lower than those that do not use nets. 
 
 3. Could an unmeasured confounder change your conclusion? Explain briefly.
-Yes, an unmeasured counfounder is possible to change the conclusion. It is very possible that the households that have access to nets, also have access to better healthcare, better living conditions, or other preventative measures. If these factors are not accounted for then the estimate can remain biased. 
 
 **Your answer:**
+1. The estimated ATE is -12.4.
+
+2. Yes, the estimation does suggest a protective effect on net use. Those who use nets were found to have a malaria risk score of roughly 12.5 lower than those that do not use nets. 
+
+3. Yes, an unmeasured counfounder is possible to change the conclusion. It is very possible that the households that have access to nets, also have access to better healthcare, better living conditions, or other preventative measures. If these factors are not accounted for then the estimate can remain biased. 
+
 
 # Reflection (6 points)
 
 Answer each question in **1–2 sentences**.
 
 **1. What did you do well on this assignment?**
+
+
+**Your answer:**
 Seth:
 I liked being able to investigate into this assignment and learn more about confounding variables. I found that to be very interesting how you can take those into account and I thought that went well. 
-
-**Your answer:**
+Rachel: I think this assignment gave us a good chance to understand ATE, propensity scores and IPW better. I think we did a good job putting those concepts into practice. 
 
 **2. What was the most challenging part of this assignment?**
+
+
+**Your answer:**
 Seth:
 I found understanding the inverse probability weights to be a little tricky. I had to make sure I understood what those meant before I continued with the assignment. 
-
-**Your answer:**
+Rachel: I also had to do quite a bit of thinking to understand how to use and implement the propensity scores and the IPWs. 
 
 **3. What would have improved your experience with this assignment?**
+
+
+**Your answer:**
 Seth:
 I did like this assignment more than some of the previous ones. I felt like we had more freedom to try out different ways of finding the solution. I like having the explanations a little bit vague to give the student more options on how to find the solution. It may also be beneficial to test more than one different type of model, maybe revisit an assignmet later, or do a short assignment where you apply a new model and see if there are any improvements. 
-
-**Your answer:**
+Rachel: 
+I also think this assignent was well set up and allowed us to practice some concepts without everything being overly structured. One thing that did constantly cross my mind though, was whether we were using the "right" code to do the job, in the sense that I was thinking of the upcoming quiz on this assignment. For the last assignment, we didn't use AI and I understood the code that we used, which was very similar to the example we did in class, but then the quiz used different syntax, which took me a little off guard. So I was thinking about how the code might be represented on the quiz maybe more than was actually helpful. 
 
 **4. What do you still need help with?**
-Seth: 
-I would like to go over more about the exploration process in the class. Considerations you should have, values to take a closer look at, and what may require further investigation. 
-
 
 **Your answer:**
+Seth: 
+I would like to go over more about the exploration process in the class. Considerations you should have, values to take a closer look at, and what may require further investigation. 
+Rachel: I think spending more time with the math itself in very practical examples would be helpful to feeling more comfortable with these concepts. 
 
 # Render and submit (3 points)
 
@@ -461,6 +473,7 @@ plot(
 State whether you used AI tools. If yes, name the tool(s), explain what you used them for, and describe how you verified the results. Your submitted code and interpretations must reflect your own understanding.
 
 **Your disclosure:**
+We did not use AI.
 
 # Group dynamics
 
