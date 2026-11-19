@@ -105,6 +105,9 @@ library(here)
 ```{r}
 #| label: load-data
 # Your code here
+df <- read_csv("heart_stuff.csv")
+head(df)
+colnames(df)
 ```
 
 
@@ -115,6 +118,24 @@ Report the number and proportion of patients in each outcome class. Make a bar p
 ```{r}
 #| label: explore-outcome
 # Your code here
+outcome_summary <- df %>%
+  group_by(DEATH_EVENT) %>%
+  summarise(
+    count = n(),
+    proportion = n() / nrow(df),
+    percentage = proportion * 100
+  )
+
+outcome_summary
+
+ggplot(df, aes(x = factor(DEATH_EVENT))) +
+  geom_bar(fill = "steelblue") +
+  labs(
+    title = "Distribution of Patient Outcomes",
+    x = "Death Event (0 = No, 1 = Yes)",
+    y = "Number of Patients"
+  ) +
+  theme_minimal()
 ```
 
 
@@ -130,6 +151,24 @@ Use a **75%/25% stratified split** and **stratified 5-fold cross-validation** on
 ```{r}
 #| label: split
 # Your code here
+set.seed(42)
+
+data_split <- initial_split(
+  df,
+  prop = 0.75,
+  strata = DEATH_EVENT
+)
+
+train_data <- training(data_split)
+test_data  <- testing(data_split)
+
+set.seed(123)
+
+folds <- vfold_cv(
+  train_data,
+  v = 5,
+  strata = DEATH_EVENT
+)
 ```
 
 # Task 2: Build a preprocessing recipe (5 points)
@@ -140,6 +179,10 @@ Create a recipe using `DEATH_EVENT ~ .`. Impute missing numeric predictor values
 #| label: recipe
 # Define heart_recipe using recipe() and appropriate step_*() functions.
 # Your code here
+
+heart_recipe <- recipe(DEATH_EVENT ~ ., data = train_data) %>%
+  step_impute_median(all_numeric_predictors()) %>%
+  step_normalize(all_numeric_predictors())
 ```
 
 **Reflection:** Explain briefly why preprocessing must be estimated from training data rather than the test set.
